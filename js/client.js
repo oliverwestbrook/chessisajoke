@@ -1,6 +1,6 @@
 // Controller (render-agnostic)
-import { createRenderer2D } from './render2d.js';
-import { createRendererGL } from './renderGL.js';
+import { createRenderer2D } from './render2d.js?v=1.30.0';
+import { createRendererGL } from './renderGL.js?v=1.30.0';
 
 let FILES=9, RANKS=9;
 let game=null, sideToMove='w';

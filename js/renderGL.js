@@ -11,11 +11,11 @@ export function createRendererGL({ onSquareClick }){
   let previewActive=false, preview=null;
 
   const COL = {
-    light: 0xe9e2d0, dark: 0x586071,
-    ivory: 0xf1e8d2, charcoal: 0x2f2f37,
+    light: 0xf3f5f9, dark: 0xa7b0c2,
+    ivory: 0xf8f2e6, charcoal: 0x33343c,
     gold: 0xffce3a, red: 0xe0563f, blue: 0x8fd0ff,
-    rim: 0x24242b,
-    type: { P:0x9aa3ad, N:0x6cc070, B:0x57b6c8, R:0x5b8dd6, Q:0xffce3a, K:0xffce3a, J:0xe0563f }
+    rim: 0x2a2d36,
+    type: { P:0x9aa3ad, N:0x5fd06b, B:0x4cc6dc, R:0x5d92ee, Q:0xffd24a, K:0xffd24a, J:0xff5a40 }
   };
   const GLYPH = { K:'♚', Q:'♛', R:'♜', B:'♝', N:'♞', P:'♟', J:'🃏' };
 
@@ -41,10 +41,10 @@ export function createRendererGL({ onSquareClick }){
 
       buildCamera();
 
-      scene.add(new THREE.AmbientLight(0xffffff, 0.72));
+      scene.add(new THREE.AmbientLight(0xffffff, 0.92));
       const span=Math.max(FILES,RANKS);
-      const key=new THREE.DirectionalLight(0xffffff, 0.85);
-      key.position.set(span*0.35, span*1.6, span*0.55);
+      const key=new THREE.DirectionalLight(0xffffff, 0.95);
+      key.position.set(span*0.45, span*1.5, span*0.65);
       key.castShadow=true;
       key.shadow.mapSize.set(1024,1024);
       const d=span;
@@ -82,8 +82,8 @@ export function createRendererGL({ onSquareClick }){
     const span=Math.max(FILES,RANKS);
     const half=span/2 + 0.7;
     camera=new THREE.OrthographicCamera(-half, half, half, -half, 0.1, 1000);
-    // camera tilt
-    camera.position.set(0, span*1.6, span*0.30);
+    // near top-down with a slight tilt
+    camera.position.set(0, span*1.9, span*0.16);
     camera.lookAt(0,0,0);
   }
 
@@ -93,8 +93,8 @@ export function createRendererGL({ onSquareClick }){
 
   // board
   function buildBoard(){
-    const lightMat=new THREE.MeshStandardMaterial({color:COL.light, roughness:0.9});
-    const darkMat =new THREE.MeshStandardMaterial({color:COL.dark,  roughness:0.9});
+    const lightMat=new THREE.MeshStandardMaterial({color:COL.light, roughness:0.72});
+    const darkMat =new THREE.MeshStandardMaterial({color:COL.dark,  roughness:0.72});
     const tileGeo=new THREE.BoxGeometry(0.99, 0.16, 0.99);
     for(let f=0;f<FILES;f++) for(let r=0;r<RANKS;r++){
       const m=new THREE.Mesh(tileGeo, ((f+r)&1)===0?lightMat:darkMat);
@@ -136,17 +136,21 @@ export function createRendererGL({ onSquareClick }){
   function createPieceGroup(code){
     const side=code[0], type=code[1];
     const g=new THREE.Group();
-    const body=new THREE.MeshStandardMaterial({color: side==='w'?COL.ivory:COL.charcoal, roughness:0.5, metalness:0.05});
+    const body=new THREE.MeshStandardMaterial({color: side==='w'?COL.ivory:COL.charcoal, roughness:0.42, metalness:0.0});
 
-    const disc=new THREE.Mesh(geo('disc', ()=>new THREE.CylinderGeometry(0.34,0.40,0.18,40)), body);
-    disc.position.y=0.09; disc.castShadow=true; disc.receiveShadow=true; g.add(disc);
+    const disc=new THREE.Mesh(geo('disc', ()=>new THREE.CylinderGeometry(0.36,0.40,0.16,8)), body);
+    disc.position.y=0.08; disc.rotation.y=Math.PI/8; disc.castShadow=true; disc.receiveShadow=true; g.add(disc);
 
-    const rim=new THREE.Mesh(geo('rim', ()=>new THREE.TorusGeometry(0.345,0.035,12,40)),
-      new THREE.MeshStandardMaterial({color: COL.type[type]||0x888888, roughness:0.35, metalness:0.25}));
-    rim.position.y=0.185; rim.rotation.x=Math.PI/2; rim.castShadow=true; g.add(rim);
+    const cap=new THREE.Mesh(geo('cap', ()=>new THREE.CylinderGeometry(0.30,0.355,0.08,8)), body);
+    cap.position.y=0.18; cap.rotation.y=Math.PI/8; cap.castShadow=true; g.add(cap);
+
+    const rimColor = COL.type[type]||0x888888;
+    const rim=new THREE.Mesh(geo('rim', ()=>new THREE.TorusGeometry(0.385,0.03,8,8)),
+      new THREE.MeshStandardMaterial({color: rimColor, emissive: rimColor, emissiveIntensity:0.6, roughness:0.3, metalness:0.15}));
+    rim.position.y=0.12; rim.rotation.x=Math.PI/2; rim.rotation.z=Math.PI/8; g.add(rim);
 
     const glyphHolder=new THREE.Group();
-    glyphHolder.position.y=0.19; glyphHolder.rotation.x=-Math.PI/2; g.add(glyphHolder);
+    glyphHolder.position.y=0.225; glyphHolder.rotation.x=-Math.PI/2; g.add(glyphHolder);
     const glyph=new THREE.Mesh(geo('glyph', ()=>new THREE.PlaneGeometry(0.56,0.56)),
       new THREE.MeshBasicMaterial({map:glyphTexture(type,side), transparent:true}));
     glyphHolder.add(glyph);
