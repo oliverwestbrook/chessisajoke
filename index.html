@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/style.css">
+  <title>Chess Is a Joke</title>
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <style>
+    :root {
+      --bg:#202127;
+      --panel:#101114;
+      --panel2:#15161a;
+      --text:#e9eaee;
+      --muted:#b7bcc6;
+      --line:#23252b;
+      --accent:#16a34a;
+    }
+    * {
+      box-sizing:border-box;
+    }
+    html, body {
+      height:100%;
+    }
+    body {
+      padding-top: 0;
+      margin: 0;
+      color: var(--text);
+      background: var(--bg);
+      font: 1rem/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    a {
+      color: #9dd6ff;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 18px 44px
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      margin: 1rem 1.6rem 2rem;}
+    nav {
+      display: flex;
+      gap: 3rem;
+    }
+    .brand {
+      font-weight: 800;
+      letter-spacing: .4px;
+      font-size: 18px;
+      opacity: .95
+    }
+    .card {
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, .38);
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      align-items:start;
+    }
+    .play-game {
+      display: flex;
+      flex-direction: column;
+      margin-top: 2rem;
+      border-top: solid 1px #ffffff2e;
+      padding: 1rem 0;
+    }
+    .play-game h2,
+    .play-game p {
+      text-align: center;
+    }
+    a.table-play {
+      display: block;
+      margin: 0 auto;
+      width: 200px;
+      text-align: center;
+      height: 54px;
+      border-radius: 10px;
+      border: solid 1px;
+      box-shadow: 0 0 10px #9dd6ff4d;
+      align-content: center;
+      margin-bottom: 3rem;
+      text-decoration: none;
+    }
+    a.table-play:hover {
+      font-style: bold;
+      box-shadow: 0 0 10px #9dd6ff;
+    }
+    .play-game form {
+      display: block;
+      margin: 0 auto;
+    }
+    .rules-intro {
+      display: flex;
+      padding: 2rem 0 0;
+      gap: 1rem;
+    }
+    .rules-intro h3 {
+      margin: 0;
+    }
+    .rules-intro > div {
+      margin-top: 4px;
+    }
+    @media ( min-width: 820px ) {
+      .hero {
+        grid-template-columns: 1.05fr .95fr;
+        gap: 26px;
+      }
+    }
+    @media ( max-width: 767px ) {
+      nav {
+        gap: 1rem;
+      }
+    }
+    figure {
+      margin: 0;
+    }
+    .board-img {
+      width:100%;height:auto;display:block;border-radius:14px;
+      border:1px solid #2a2d35; box-shadow:0 14px 40px rgba(0,0,0,.45)
+    }
+    h1{margin:.1em 0 .35em;font-size:clamp(24px,3.2vw,40px);letter-spacing:.2px}
+    p.lede{margin:0 0 10px;color:#cfd4dc}
+    .small{font-size:13.5px;color:var(--muted)}
+    .waitlist{max-width:520px;margin:12px 0 6px;font:14px/1.35 system-ui,sans-serif;color:#eee}
+    .waitlist label{display:block;margin-bottom:6px;color:#d9dee6;font-weight:600;letter-spacing:.3px}
+    .waitlist .row{display:flex;gap:8px;margin-top:6px}
+    .waitlist input[type=email]{
+      flex:1;padding:12px;border-radius:10px;border:1px solid #3a3d45;background:#0b0c0f;color:#eee;outline:none
+    }
+    .waitlist input[type=email]:focus{border-color:#4b9cff;box-shadow:0 0 0 3px rgba(75,156,255,.25)}
+    .waitlist button{
+      padding:12px 16px;border:0;border-radius:10px;background:var(--accent);color:#fff;cursor:pointer;font-weight:700
+    }
+    .waitlist button:hover{filter:brightness(1.06)}
+    .waitlist .q,.waitlist .ans{margin-top:10px;display:inline-block}
+    .waitlist .ans{
+      width:90px;padding:10px;border-radius:10px;border:1px solid #3a3d45;background:#0b0c0f;color:#eee;margin-left:10px;outline:none
+    }
+    .waitlist .ans:focus{border-color:#4b9cff;box-shadow:0 0 0 3px rgba(75,156,255,.25)}
+    .waitlist .msg{margin-top:10px;min-height:1.2em;opacity:.95}
+
+    footer{margin-top:34px;text-align:center;color:#a7adb7}
+    footer .links{display:flex;gap:14px;justify-content:center;margin-top:6px}
+    .legal{margin-top:8px;font-size:12.5px;color:#8f95a1}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">Chess Is a Joke</div>
+      <nav>
+        <a href="about.html">About</a>
+        <a href="/play">Play</a>
+      </nav>
+    </header>
+    <div class="card">
+      <section class="hero">
+        <figure>
+          <img class="board-img" src="board-hero.png" alt="9x9 chess board with Jokers and pawns">
+        </figure>
+        <div>
+          <h1>Introducing Chess Is a Joke (9x9)</h1>
+          <p class="lede">
+            An online-play and table-friendly variant featuring the <strong>Joker</strong> (freezes threats) and
+            <strong>En Croissant</strong> (a twist on en passant). Freeze, flank, and discover new tactics.
+          </p>
+          <div class="rules-intro">
+            <h3>New pieces &amp; rules</h3>
+            <div>
+              <select id="languageSelector">
+                <option value="en">English</option>
+                <option value="ne">Nepali</option>
+                <option value="hi">Hindi</option>
+                <option value="es">Spanish</option>
+              </select>
+              <script>
+                document.getElementById('languageSelector').addEventListener('change', function() {
+                const selected = this.value;
+                document.querySelectorAll('[id="rules"]').forEach(section => {
+                  section.hidden = !section.classList.contains('lang-' + selected);
+                });
+                });
+              </script>
+            </div>
+          </div>
+          <section id="rules" class="lang-en">
+            <h4>Joker (J)</h4>
+            <ul>
+            <li>Moves like a knight (L-jump). Cannot capture; may not land on an occupied square.</li>
+            <li>Freezes the highest-value adjacent enemy (8 surrounding squares; king excluded). A frozen piece cannot move or capture (and cannot capture the Joker).</li>
+            <li>Retargets automatically if a higher-value enemy becomes adjacent.</li>
+            <li>If the Joker leaves, the last frozen target stays frozen for its next turn; if the Joker is captured, the freeze ends immediately.</li>
+            <li>Frozen pieces exert no attack/control — a frozen attacker does not give check.</li>
+            <li>Capturing a Joker is worth 0 points and does not reset the 50-move clock.</li>
+            </ul>
+          
+            <h4>En Croissant</h4>
+            <ul>
+            <li>Both pawns must have previously made a 2-square first move (in their own files).</li>
+            <li>When they later become side-by-side (same rank, adjacent files) because one single-steps past, the opponent may play En Croissant on the very next move only.</li>
+            <li>Move: the opponent pawn steps diagonally <em>behind</em> the passer into its file (the square immediately beyond it). No capture occurs.</li>
+            <li>Effect: the passed pawn is frozen for its next turn only.</li>
+            <li>Expires if not used immediately; destination must be empty; normal bounds/check/freeze rules apply.</li>
+            </ul>
+          </section>
+          <section id="rules" class="lang-ne" hidden>
+            <h3>नयाँ मोहरा र नियमहरू</h3>
+          
+            <h4>जोकर (J)</h4>
+            <ul>
+            <li>घोडाजस्तै चाल चल्छ (L-जम्प)। कब्जा गर्न सक्दैन; कुनै पनि भरिएको घरमा उत्रन पाउँदैन।</li>
+            <li>वरिपरिका ८ घरहरूमा रहेका सबैभन्दा उच्च-मूल्यका शत्रु मोहरालाई जमाउँछ (राजा बाहेक)। जमेको मोहराले न त चल्न सक्छ न त कब्जा गर्न सक्छ (र जोकरलाई पनि कब्जा गर्न सक्दैन)।</li>
+            <li>यदि वरिपरि अझ उच्च-मूल्यको शत्रु आइपुग्छ भने जोकर स्वतः नयाँ लक्ष्यमा सर्छ।</li>
+            <li>यदि जोकर गएपछि, अन्तिम जमेको मोहरा आफ्नो अर्को पालोसम्म जमेको रहन्छ; तर जोकर कब्जा भएमा, जमावट तुरुन्त समाप्त हुन्छ।</li>
+            <li>जमेको मोहराले आक्रमण वा नियन्त्रण देखाउँदैन — जमेको आक्रमणकर्ताले 'चेक' दिँदैन।</li>
+            <li>जोकर कब्जा गर्दा ० अंक पाइन्छ र ५० चालको घडी पुनः सुरु हुँदैन।</li>
+            </ul>
+          
+            <h4>En Croissant</h4>
+            <ul>
+            <li>दुवै प्यादाले पहिले आफ्नै स्तम्भमा दुई घर अगाडि सर्ने चाल गरिसकेका हुनुपर्छ।</li>
+            <li>पछि तिनीहरू एकै पङ्क्तिमा र छेउछाउका स्तम्भहरूमा आइपुग्दा (जब एउटा एक घर अघि बढ्छ), विपक्षीले केवल अर्को चालमा मात्र En Croissant खेल्न सक्छ।</li>
+            <li>चाल: विपक्षीको प्यादाले ति पास भएको प्यादाको पछाडिको घरमा तिरछो सर्छ (त्यो प्यादाको सिधा पछाडि रहेको खाली घरमा)। कुनै कब्जा हुँदैन।</li>
+            <li>प्रभाव: त्यो पास भएको प्यादा केवल आफ्नो अर्को पालोका लागि जमिन्छ।</li>
+            <li>यदि तुरुन्त प्रयोग नगरिएमा अवसर समाप्त हुन्छ; गन्तव्य घर खाली हुनुपर्छ; सामान्य सीमा/चेक/जमावटका नियमहरू लागू हुन्छन्।</li>
+            </ul>
+          </section>
+          <section id="rules" class="lang-hi" hidden>
+            <h3>नए मोहरे और नियम</h3>
+          
+            <h4>जोकर (J)</h4>
+            <ul>
+            <li>घोड़े की तरह चलता है (L-जंप)। मार नहीं सकता; किसी भरे हुए खाने पर नहीं उतर सकता।</li>
+            <li>आसपास के 8 खानों में सबसे उच्च-मूल्य वाले दुश्मन को फ्रीज़ करता है (राजा को छोड़कर)। जमे हुए मोहरे न तो चल सकते हैं और न ही मार सकते हैं (और जोकर को नहीं मार सकते)।</li>
+            <li>अगर कोई और अधिक मूल्य वाला दुश्मन पास आता है, तो जोकर स्वतः नए लक्ष्य पर केंद्रित हो जाता है।</li>
+            <li>अगर जोकर चला गया, तो पिछला जमे हुआ मोहरा अपनी अगली चाल तक जमे रहता है; अगर जोकर पकड़ा गया तो फ्रीज़ तुरंत खत्म हो जाता है।</li>
+            <li>जमे हुए मोहरे कोई हमला या नियंत्रण नहीं दिखाते — जमे हुए हमलावर से ‘चेक' नहीं लगता।</li>
+            <li>जोकर को पकड़ने पर 0 अंक मिलते हैं और 50-चाल वाली घड़ी रीसेट नहीं होती।</li>
+            </ul>
+          
+            <h4>En Croissant</h4>
+            <ul>
+            <li>दोनों प्यादों ने पहले अपनी-अपनी फाइल में 2-खाने की शुरुआती चाल की होनी चाहिए।</li>
+            <li>जब बाद में वे एक ही रैंक में साथ-साथ (सटे हुए फाइलों में) आ जाएँ क्योंकि एक प्यादा एक कदम बढ़ा, तो विरोधी केवल अगली चाल में En Croissant खेल सकता है।</li>
+            <li>चाल: विरोधी का प्यादा तिरछा <em>पीछे</em> की ओर उस प्यादे की फाइल में जाता है (उसके ठीक पीछे वाला खाना)। कोई मार नहीं होती।</li>
+            <li>प्रभाव: गुज़रा हुआ प्यादा अपनी अगली चाल के लिए ही जमे रहता है।</li>
+            <li>यदि तुरंत उपयोग न किया जाए तो अवसर समाप्त हो जाता है; गंतव्य खाली होना चाहिए; सामान्य सीमा/चेक/फ्रीज़ नियम लागू होते हैं।</li>
+            </ul>
+          </section>
+          <section id="rules" class="lang-es" hidden>
+            <h3>Nuevas piezas y reglas</h3>
+          
+            <h4>Joker (J)</h4>
+            <ul>
+            <li>Se mueve como un caballo (salto en L). No puede capturar; no puede aterrizar en una casilla ocupada.</li>
+            <li>Congela a la pieza enemiga de mayor valor adyacente (8 casillas alrededor, excluyendo al rey). Una pieza congelada no puede moverse ni capturar (y no puede capturar al Joker).</li>
+            <li>Cambia automáticamente de objetivo si una pieza enemiga de mayor valor se vuelve adyacente.</li>
+            <li>Si el Joker se aleja, la última pieza congelada permanece congelada durante su siguiente turno; si el Joker es capturado, el efecto se termina inmediatamente.</li>
+            <li>Las piezas congeladas no ejercen ataque ni control — un atacante congelado no da jaque.</li>
+            <li>Capturar un Joker vale 0 puntos y no reinicia el contador de 50 movimientos.</li>
+            </ul>
+          
+            <h4>En Croissant</h4>
+            <ul>
+            <li>Ambos peones deben haber hecho previamente su movimiento inicial de 2 casillas (en sus propios archivos).</li>
+            <li>Cuando luego quedan lado a lado (misma fila, archivos adyacentes) porque uno avanzó un paso, el oponente puede jugar En Croissant solo en el siguiente turno.</li>
+            <li>Movimiento: el peón del oponente se mueve en diagonal <em>detrás</em> del peón que pasó, dentro de su archivo (la casilla inmediatamente detrás). No hay captura.</li>
+            <li>Efecto: el peón que pasó queda congelado solo durante su siguiente turno.</li>
+            <li>Expira si no se usa de inmediato; la casilla de destino debe estar vacía; se aplican las reglas normales de límites/jaque/congelación.</li>
+            </ul>
+          </section>
+        </div>
+      </section>
+      <section class="play-game">
+        <h2>Table Play</h2>
+        <a class="table-play" href="/play">Play Now</a>
+        <h2>Online Play <em>(coming soon)</em></h2>
+        <p class="small">Want an invite? Add your email below and we'll send a single email to let you know when play is open!</p>
+        <form id="wlForm" class="waitlist" autocomplete="off" novalidate>
+          <label for="wlEmail">Get an invite:</label>
+          <div class="row">
+            <input type="email" id="wlEmail" name="email" placeholder="you@example.com" required>
+            <button type="submit">Notify me</button>
+          </div>
+          <input type="text" id="wlHP" name="hp" tabindex="-1" autocomplete="off" style="display:none">
+          <input type="hidden" id="wlTS" name="ts">
+          <span id="wlQ" class="q"></span>
+          <input type="number" id="wlAns" name="answer" inputmode="numeric" placeholder="?" required class="ans">
+
+          <div id="wlMsg" class="msg" role="status" aria-live="polite"></div>
+        </form>
+        <p class="small">We store your email privately to send one invite. No sharing.</p>
+      </section>
+    </div>
+    <footer>
+      <div class="links">
+        <a href="about.html">About</a>
+        <a href="/play">Play</a>
+        <a href="https://www.wildwestbrooks.com" target="_blank">Creators</a>
+      </div>
+      <div class="legal">© <span id="yy"></span> Chess Is a Joke</div>
+    </footer>
+  </div>
+
+  <script>
+    // year
+    document.getElementById('yy').textContent = new Date().getFullYear();
+    (function() {
+      const form = document.getElementById('wlForm');
+      if (!form) return;
+
+      const email = document.getElementById('wlEmail');
+      const hp    = document.getElementById('wlHP');
+      const ts    = document.getElementById('wlTS');
+      const q     = document.getElementById('wlQ');
+      const ans   = document.getElementById('wlAns');
+      const msg   = document.getElementById('wlMsg');
+      const a = 2 + Math.floor(Math.random() * 8);
+      const b = 2 + Math.floor(Math.random() * 8);
+      q.textContent = `${a} + ${b} =`;
+      ts.value = Math.floor(Date.now() / 1000);
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const val = (email.value || '').trim();
+        if (!val) { msg.textContent = 'Enter an email.'; return; }
+
+        const fd = new FormData();
+        fd.append('email', val);
+        fd.append('hp', hp.value);
+        fd.append('ts', ts.value);
+        fd.append('a', String(a));
+        fd.append('b', String(b));
+        fd.append('answer', (ans.value || '').trim());
+
+        try {
+          const r  = await fetch('/engine/subscribe.php', { method: 'POST', body: fd, cache: 'no-store' });
+          const js = await r.json();
+          msg.textContent = js.message || (js.ok ? 'Thanks!' : 'Try again');
+          if (js.ok) { form.reset(); }
+        } catch {
+          msg.textContent = 'Network hiccup — try again.';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

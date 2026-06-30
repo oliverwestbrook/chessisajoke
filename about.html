@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Chess Is a Joke — Variant Rules (Defensive Publication)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Public defensive publication of a chess variant with a Joker piece and En Croissant pawn mechanic on a 9x9 board." />
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <style>
+    :root{--fg:#ffffffed;--bg:#202127;--muted:#ffffff9c;--accent:#fff}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font:16px/1.45 system-ui,Segoe UI,Roboto,Arial,sans-serif}
+    .wrap{max-width:820px;margin:0 auto;padding:28px 20px}
+    h1{font-size:1.8rem;margin:.2rem 0 1rem}
+    h2{font-size:1.25rem;margin:1.4rem 0 .4rem}
+    h3{font-size:1.05rem;margin:1.1rem 0 .3rem}
+    code,kbd{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#3c3c3c;padding:.08em .35em;border-radius:.35em}
+    .muted{color:var(--muted)}
+    .box{background:#3c3c3c;border:1px solid #c6c6c663;border-radius:10px;padding:12px 14px;margin:12px 0}
+    ul{margin:.35rem 0 .75rem .95rem}
+    li{margin:.25rem 0}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .small{font-size:.92rem}
+    .foot{margin-top:1.2rem;padding-top:1rem;border-top:1px dashed #e5e7eb}
+    a{color:var(--accent);text-decoration:underline}
+    a:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>Chess Is a Joke</h1>
+    <h2>About & Variant Rules</h2>
+    <div class="muted small">Defensive publication • Version 1.0 • Last updated: <time>2025-10-21</time></div>
+
+    <div class="box">
+      <strong>Abstract.</strong> This variant extends classical chess to a <strong>9x9</strong> board and adds a non-capturing piece, the <strong>Joker</strong>, whose power is to <em>freeze</em> nearby enemy pieces. It also introduces a pawn mechanic called <strong>En Croissant</strong> (a freeze-based cousin of en passant). The purpose of this page is to publicly disclose and dedicate these mechanics so they constitute prior art.
+    </div>
+
+    <h2>1) Board &amp; Setup</h2>
+    <ul>
+      <li><strong>Board:</strong> 9 files x 9 ranks.</li>
+      <li><strong>Pieces:</strong> Standard set plus one <em>Joker</em> per side.</li>
+      <li><strong>Suggested back rank (White, left→right):</strong> R N B Q K B J N R. Black mirrors.<br>
+          <span class="muted small">Note: Other initial Joker positions are possible; mechanics below are independent of exact Joker slot.</span>
+      </li>
+      <li><strong>Pawns:</strong> Start on White's rank 2 / Black's rank 8; move upward/downward as usual (with 2-step option from the start square).</li>
+    </ul>
+
+    <h2>2) The Joker (new piece)</h2>
+    <h3>2.1 Core mechanic — Freezing</h3>
+    <ul>
+      <li>The Joker <strong>cannot capture</strong> and exists only to <strong>freeze</strong> enemies.</li>
+      <li>Whenever a Joker ends a move <strong>adjacent</strong> (orthogonal or diagonal; the 8 surrounding squares) to one or more enemy pieces, it freezes the highest-value one among those adjacent targets.</li>
+      <li><strong>King and opponent Joker are not a valid freeze targets.</strong></li>
+      <li><strong>Ties:</strong> If two or more adjacent enemies share the same highest value (e.g., two bishops), <strong>all tied highest pieces become frozen</strong>.</li>
+      <li><strong>Retargeting:</strong> If a higher-value enemy subsequently becomes adjacent while the Joker remains, the freeze retargets to that higher-value piece; previously frozen lower-value pieces immediately unfreeze.</li>
+    </ul>
+
+    <h3>2.2 Freeze effects</h3>
+    <ul>
+      <li>A frozen piece <strong>cannot move or capture</strong> and is treated as exerting <strong>no attack/control</strong> over squares while frozen.</li>
+      <li>Because frozen pieces do not give check, a king may legally move into or through squares “controlled” only by frozen enemies.</li>
+      <li><strong>Persistence:</strong>
+        <ul>
+          <li>If the Joker <em>moves away</em>, the last frozen piece remains frozen for exactly <strong>one additional friendly turn</strong> and then unfreezes.</li>
+          <li>If the Joker is <em>captured</em>, all pieces it had frozen <strong>unfreeze immediately</strong>.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>2.3 Movement</h3>
+    <ul>
+      <li>The Joker moves as a knight (an L-shaped jump: two squares in one direction, one perpendicular), may leap over pieces, must land on an empty square, and cannot capture. (Variants are possible without changing the invention; the freeze mechanic is independent of the exact movement pattern.) The freezing rules above apply regardless of the movement pattern.</li>
+    </ul>
+
+    <div class="box small">
+      <strong>Piece values used solely for “highest piece wins” freezing:</strong> Q=9, R=5, B=3, N=3, P=1, Joker=0. (King excluded.)
+    </div>
+
+    <h2>3) En Croissant (pawn special)</h2>
+    <p>En Croissant is a freeze-based response available when enemy pawns advance in adjacent files.</p>
+    <h3>3.1 Preconditions (strict mode)</h3>
+    <ul>
+      <li>Two opposing pawns occupy <strong>adjacent files</strong>.</li>
+      <li><strong>Both</strong> pawns must have used their initial <strong>two-square</strong> advance earlier in the game (their respective first pawn moves).</li>
+      <li>Later, when one pawn advances a single square so that the two pawns become <strong>side-by-side on the same rank</strong> (i.e., the passer “tries to sneak by”), the other side gains a one-move option.</li>
+    </ul>
+    <h3>3.2 The En Croissant move</h3>
+    <ul>
+      <li>On the very <strong>next move only</strong>, the non-moving side may move its pawn <strong>diagonally into the file of the passer</strong>, to the square directly <em>behind</em> that pawn (relative to the passer's travel direction).</li>
+      <li>No capture occurs. Instead, the passed pawn becomes <strong>frozen for its next turn only</strong>. After that one turn, it unfreezes automatically.</li>
+      <li>If not exercised immediately, the En Croissant right expires.</li>
+    </ul>
+
+    <h2>4) Other rules &amp; clarifications</h2>
+    <ul>
+      <li><strong>Promotion:</strong> A pawn that reaches the back rank may promote to Q, R, B, N, or <strong>Joker</strong> (not to King).</li>
+      <li><strong>Castling:</strong> Allowed with standard conditions (king/rook unmoved, clear path, king not in/through/into check). On a 9x9 board, final squares may be adjusted by implementation; the common choice places the king one square from the edge on the castling side.</li>
+      <li><strong>Check / Checkmate / Stalemate:</strong> Attacks by frozen pieces are ignored. Checkmate and stalemate are evaluated using only unfrozen attacking lines.</li>
+      <li><strong>Scoring (optional):</strong> Capturing a Joker is worth <strong>0 points</strong> and does not reset a 50-move counter.</li>
+    </ul>
+
+    <h2>5) Definitions</h2>
+    <ul>
+      <li><strong>Adjacent:</strong> Any of the 8 squares immediately surrounding a piece (orthogonal or diagonal).</li>
+      <li><strong>Behind (for En Croissant):</strong> The square directly on the passer's file, one rank opposite its movement direction from the side-by-side position.</li>
+    </ul>
+
+    <h2>6) Example situations (text)</h2>
+    <div class="grid small">
+      <div class="box">
+        <strong>Joker retargeting:</strong> Joker sits next to an enemy rook (freezes rook). An enemy queen moves next to the Joker as well. The freeze switches to the queen immediately; the rook unfreezes.
+      </div>
+      <div class="box">
+        <strong>Joker leaves:</strong> Joker steps away; the last frozen queen remains frozen for one additional friendly turn and then unfreezes.
+      </div>
+      <div class="box">
+        <strong>Queen captured by king:</strong> A queen that is frozen and undefended can be captured by the enemy king because the queen exerts no control while frozen.
+      </div>
+      <div class="box">
+        <strong>En Croissant:</strong> White and Black pawns in adjacent files have both double-stepped earlier. Black advances one to become side-by-side. On White's very next move, White steps diagonally “behind” into Black's file; Black's pawn is frozen for its next turn.
+      </div>
+    </div>
+
+    <div class="foot small">
+      <h2>7) Publication &amp; License</h2>
+      <p>
+        This page is a <strong>defensive publication</strong> intended to place the described mechanics in the public domain as prior art.
+        Unless otherwise noted, this specification is dedicated via <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>.
+      </p>
+    </div>
+  </main>
+</body>
+</html>
