@@ -101,10 +101,10 @@ Today everything runs on one device for table play. Online play is next.
 ## License
 
 - **Variant rules / spec** (`about.html`): dedicated to the public domain via [CC0](https://creativecommons.org/publicdomain/zero/1.0/) as a defensive publication.
-- **Code:** add your preferred license here before relying on it.
+- **Code:** no license. It's public so you can read it and learn from it, but it isn't licensed for reuse — please don't use it commercially. All rights reserved.
 
 ## Credits
 
 - Built with [Three.js](https://threejs.org/).
 - The name nods to Alan Watts on the game people play and call life.
-- Created by [Wild West Brooks](https://www.wildwestbrooks.com).
+- Created by **oliverwestbrook** ([WildWestbrooks.com](https://www.wildwestbrooks.com)).
