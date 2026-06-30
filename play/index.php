@@ -38,6 +38,6 @@
       }
     }
     </script>
-    <script type="module" src="../js/client.js?v=1.30.0"></script>
+    <script type="module" src="../js/client.js?v=1.31.0"></script>
   </body>
 </html>

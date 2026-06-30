@@ -1,6 +1,6 @@
 // Controller (render-agnostic)
-import { createRenderer2D } from './render2d.js?v=1.30.0';
-import { createRendererGL } from './renderGL.js?v=1.30.0';
+import { createRenderer2D } from './render2d.js?v=1.31.0';
+import { createRendererGL } from './renderGL.js?v=1.31.0';
 
 let FILES=9, RANKS=9;
 let game=null, sideToMove='w';
@@ -548,7 +548,7 @@ function gameOverMessage(pos){
 }
 
 // end-of-game announcement
-function announceGameOver(pos){
+async function announceGameOver(pos){
   if(announcedEnd) return;
   if(!pos || !pos.status || pos.status==='ongoing') return;
   announcedEnd = true;
@@ -559,10 +559,18 @@ function announceGameOver(pos){
   const loser = pos.winner ? (pos.winner==='w'?'b':'w') : null;
   const preferTop = (tableMode && loser==='b') ? true : (tableMode ? false : null);
   toast(msg, 2600, preferTop);
-  showGameOverBanner(msg);
 
-  // celebration
-  try{ if(renderer && renderer.celebrate && pos.winner) renderer.celebrate(pos.winner); }catch(_){}
+  try{
+    if(pos.winner && renderer){
+      const kingSq = pos.kingPos && loser ? pos.kingPos[loser] : null;
+      if(renderer.winCutscene && pos.reason==='checkmate' && lastMove && kingSq){
+        await renderer.winCutscene(pos.winner, {pieceF:lastMove.tf, pieceR:lastMove.tr, kingSq});
+      }
+      if(renderer.celebrate) renderer.celebrate(pos.winner);
+    }
+  }catch(_){}
+
+  showGameOverBanner(msg);
 }
 
 function showGameOverBanner(msg){

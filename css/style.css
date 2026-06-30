@@ -134,7 +134,7 @@ body {
   pointer-events:none;
 }
 #toast-bin-bottom{ bottom:18px; }
-#toast-bin-top{ top:18px; }
+#toast-bin-top{ top:64px; }
 
 .table-mode #toast-bin-top {
   transform: translateX(-50%) rotate(180deg);
@@ -177,7 +177,7 @@ body {
   0%,100%{ box-shadow:0 10px 30px rgba(0,0,0,.55), 0 0 16px rgba(255,140,26,.35); }
   50%    { box-shadow:0 10px 30px rgba(0,0,0,.55), 0 0 30px rgba(255,140,26,.75); }
 }
-#confirm-bar.top{ top:24px; bottom:auto; }
+#confirm-bar.top{ top:64px; bottom:auto; }
 #confirm-bar button{
   appearance:none;
   border:0;
