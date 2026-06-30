@@ -145,12 +145,15 @@ export function createRendererGL({ onSquareClick }){
       new THREE.MeshStandardMaterial({color: COL.type[type]||0x888888, roughness:0.35, metalness:0.25}));
     rim.position.y=0.185; rim.rotation.x=Math.PI/2; rim.castShadow=true; g.add(rim);
 
+    const glyphHolder=new THREE.Group();
+    glyphHolder.position.y=0.19; glyphHolder.rotation.x=-Math.PI/2; g.add(glyphHolder);
     const glyph=new THREE.Mesh(geo('glyph', ()=>new THREE.PlaneGeometry(0.56,0.56)),
       new THREE.MeshBasicMaterial({map:glyphTexture(type,side), transparent:true}));
-    glyph.position.y=0.19; glyph.rotation.x=-Math.PI/2; g.add(glyph);
+    glyphHolder.add(glyph);
 
     g.userData.tintMats=[body];
     g.userData.baseCols=[body.color.clone()];
+    g.userData.glyph=glyph;
     g.userData.code=code;
     return g;
   }
@@ -169,7 +172,7 @@ export function createRendererGL({ onSquareClick }){
   function render(pos, view){
     lastPos=pos; lastView=view||{};
     if(!started){ return; }
-    if(previewActive){ updateHighlights(lastView); root.rotation.y=lastView.tableMode?Math.PI:0; renderOnce(); return; }
+    if(previewActive){ updateHighlights(lastView); renderOnce(); return; }
     if(!pos || !pos.board){ updateHighlights(lastView); renderOnce(); return; }
 
     const frozen=lastView.frozen||new Set();
@@ -182,10 +185,12 @@ export function createRendererGL({ onSquareClick }){
     for(const [key,code] of desired){
       if(!pieceMap.has(key)){ const [f,r]=key.split(',').map(Number); const grp=createPieceGroup(code); placeGroup(grp,f,r); pieceGroup.add(grp); pieceMap.set(key,{group:grp,code}); }
     }
-    for(const [key,entry] of pieceMap) setFrozen(entry.group, frozen.has(key));
+    for(const [key,entry] of pieceMap){
+      setFrozen(entry.group, frozen.has(key));
+      if(entry.group.userData.glyph) entry.group.userData.glyph.rotation.z = (lastView.tableMode && entry.code[0]==='b') ? Math.PI : 0;
+    }
 
     updateHighlights(lastView);
-    root.rotation.y = lastView.tableMode ? Math.PI : 0;
     renderOnce();
   }
 
