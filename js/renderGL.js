@@ -386,74 +386,6 @@ export function createRendererGL({ onSquareClick }){
   }
   function span(){ return Math.max(FILES,RANKS); }
 
-  // mate cutscene
-  function emojiTexture(em){
-    const k='emo'+em; if(glyphCache.has(k)) return glyphCache.get(k);
-    const S=128, c=document.createElement('canvas'); c.width=c.height=S;
-    const g=c.getContext('2d'); g.clearRect(0,0,S,S); g.textAlign='center'; g.textBaseline='middle';
-    g.font='92px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';
-    g.fillText(em, S/2, S/2+6);
-    const t=new THREE.CanvasTexture(c); t.colorSpace=THREE.SRGBColorSpace; t.anisotropy=4;
-    glyphCache.set(k,t); return t;
-  }
-  function setKingFace(glyph, tex){ if(glyph){ glyph.material.map=tex; glyph.material.needsUpdate=true; } }
-
-  function winCutscene(winner, mate){
-    if(!started || !mate) return Promise.resolve();
-    const attacker = pieceMap.get(mate.pieceF+','+mate.pieceR);
-    const ks = mate.kingSq;
-    const king = (ks && Number.isInteger(ks[0])) ? pieceMap.get(ks[0]+','+ks[1]) : null;
-    if(!attacker || !king) return Promise.resolve();
-
-    const overlay=new THREE.Mesh(
-      geo('cutoverlay', ()=>new THREE.PlaneGeometry(FILES+6, RANKS+6)),
-      new THREE.MeshBasicMaterial({color:0x05060a, transparent:true, opacity:0, depthWrite:false})
-    );
-    overlay.rotation.x=-Math.PI/2; overlay.position.set(0,1.5,0); fxGroup.add(overlay);
-
-    const ag=attacker.group, kg=king.group;
-    const aHome={x:ag.position.x,y:ag.position.y,z:ag.position.z,s:ag.scale.x};
-    const kHome={x:kg.position.x,y:kg.position.y,z:kg.position.z,sx:kg.scale.x,sy:kg.scale.y,sz:kg.scale.z,rz:kg.rotation.z};
-    const kGlyph=kg.userData.glyph, kMap=kGlyph?kGlyph.material.map:null;
-
-    ag.position.y=2.0; kg.position.y=2.0;
-    const kx=worldX(ks[0]), kz=worldZ(ks[1]);
-    const ax0=ag.position.x, az0=ag.position.z;
-    const tears=makeTears(); kg.add(tears); tears.visible=false;
-
-    const seq = async ()=>{
-      setKingFace(kGlyph, emojiTexture('😨'));
-      await addTween(0.45,(p)=>{ overlay.material.opacity=0.82*p; kg.position.x=kHome.x+Math.sin(p*40)*0.03; kg.scale.setScalar(1+0.12*p); });
-      await addTween(0.4,(p)=>{ ag.scale.setScalar(1+1.5*p); });
-      await addTween(1.1,(p)=>{
-        const e=p<0.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
-        ag.position.x=ax0+(kx-ax0)*e;
-        ag.position.z=az0+(kz-az0)*e - Math.sin(p*Math.PI)*1.5;
-        ag.rotation.y=p*Math.PI*2;
-        kg.rotation.z=-0.28*p + Math.sin(p*30)*0.05*(1-p);
-      });
-      setKingFace(kGlyph, emojiTexture('😭'));
-      tears.visible=true;
-      await addTween(0.3,(p)=>{
-        ag.position.x=kx; ag.position.z=kz;
-        ag.position.y=2.0 + Math.sin(p*Math.PI)*0.6;
-        kg.scale.set(1+0.3*(1-p), Math.max(0.5,1-0.45*p), 1+0.3*(1-p));
-        ag.rotation.z=0.2*Math.sin(p*Math.PI);
-      });
-      await addTween(0.9,(p)=>{ stepTears(tears,p); kg.rotation.z=-0.28+Math.sin(p*20)*0.04; });
-      await addTween(0.5,(p)=>{ overlay.material.opacity=0.82*(1-p); });
-    };
-
-    return seq().catch(e=>console.warn('[renderGL] winCutscene',e)).then(()=>{
-      fxGroup.remove(overlay); overlay.material.dispose();
-      kg.remove(tears); disposeGroup(tears);
-      setKingFace(kGlyph, kMap);
-      ag.position.set(aHome.x,aHome.y,aHome.z); ag.scale.setScalar(aHome.s); ag.rotation.set(0,0,0);
-      kg.position.set(kHome.x,kHome.y,kHome.z); kg.scale.set(kHome.sx,kHome.sy,kHome.sz); kg.rotation.z=kHome.rz;
-      renderOnce();
-    });
-  }
-
   // lifecycle
   function renderOnce(){ if(renderer&&scene&&camera) renderer.render(scene,camera); }
 
@@ -488,5 +420,5 @@ export function createRendererGL({ onSquareClick }){
     started=false;
   }
 
-  return { kind:'gl', init, setDims, resize, render, previewMove, commitPreview, cancelPreview, animateMove, flashIllegal, winCutscene, celebrate, reset, destroy };
+  return { kind:'gl', init, setDims, resize, render, previewMove, commitPreview, cancelPreview, animateMove, flashIllegal, celebrate, reset, destroy };
 }

@@ -1,12 +1,14 @@
 // Controller (render-agnostic)
-import { createRenderer2D } from './render2d.js?v=1.31.0';
-import { createRendererGL } from './renderGL.js?v=1.31.0';
+import { createRenderer2D } from './render2d.js?v=1.32.0';
+import { createRendererGL } from './renderGL.js?v=1.32.0';
+import { createArena } from './arena.js?v=1.32.0';
 
 let FILES=9, RANKS=9;
 let game=null, sideToMove='w';
 let whiteTime=600, blackTime=600, timer=null;
 let lastPos=null;
 let lastMove=null;          // last confirmed move
+let moveHistory=[];         // confirmed moves this session (for 3D replay)
 let announcedEnd=false;     // game-over announced once
 let isSending=false;
 let showConfirmUI=false;
@@ -428,6 +430,7 @@ async function sendMove(){
 
   sideToMove=js.data?.sideToMove || sideToMove;
   lastMove={ff,fr,tf,tr};
+  moveHistory.push({ff,fr,tf,tr,pc,promo:promo||null,capture:anim.capture,rook:anim.rook});
 
   // finalize preview
   try{ if(renderer && renderer.commitPreview) renderer.commitPreview(anim); }catch(_){}
@@ -560,17 +563,62 @@ async function announceGameOver(pos){
   const preferTop = (tableMode && loser==='b') ? true : (tableMode ? false : null);
   toast(msg, 2600, preferTop);
 
-  try{
-    if(pos.winner && renderer){
-      const kingSq = pos.kingPos && loser ? pos.kingPos[loser] : null;
-      if(renderer.winCutscene && pos.reason==='checkmate' && lastMove && kingSq){
-        await renderer.winCutscene(pos.winner, {pieceF:lastMove.tf, pieceR:lastMove.tr, kingSq});
-      }
-      if(renderer.celebrate) renderer.celebrate(pos.winner);
-    }
-  }catch(_){}
+  const canArena = pos.winner && pos.reason==='checkmate' && webglAvailable()
+                && lastMove && pos.kingPos && pos.kingPos[loser];
+  if(canArena){ openArenaModal(pos, loser, msg); return; }
 
+  danceAndBanner(pos, msg);
+}
+
+function danceAndBanner(pos, msg){
+  try{ if(renderer && renderer.celebrate && pos.winner) renderer.celebrate(pos.winner); }catch(_){}
   showGameOverBanner(msg);
+}
+
+// 3D win cinematic + replay modal
+async function openArenaModal(pos, loser, msg){
+  const shade=document.createElement('div'); shade.id='arena-shade';
+  const stage=document.createElement('div'); stage.id='arena-stage';
+  const title=document.createElement('div'); title.id='arena-title'; title.textContent=msg;
+  const bar=document.createElement('div'); bar.id='arena-bar';
+  const btnPlay=document.createElement('button'); btnPlay.className='arena-btn'; btnPlay.textContent='Playback';
+  const btnNext=document.createElement('button'); btnNext.className='arena-btn'; btnNext.textContent='Next move'; btnNext.style.display='none';
+  const btnClose=document.createElement('button'); btnClose.className='arena-btn alt'; btnClose.textContent='Close';
+  bar.append(btnPlay, btnNext, btnClose);
+  stage.append(title, bar);
+  shade.appendChild(stage);
+  document.body.appendChild(shade);
+
+  const arena=createArena();
+  let closed=false;
+  const finish=()=>{
+    if(closed) return; closed=true;
+    try{ arena.destroy(); }catch(_){}
+    shade.remove();
+    danceAndBanner(pos, msg);
+  };
+  btnClose.onclick=finish;
+
+  const ok = arena.mount(stage, {files:FILES, ranks:RANKS});
+  if(!ok){ finish(); return; }
+
+  arena.setBoard(pos.board);
+  await arena.playWin({pieceF:lastMove.tf, pieceR:lastMove.tr, kingSq:pos.kingPos[loser]}, pos.winner);
+
+  let idx=0;
+  btnPlay.onclick=()=>{
+    btnPlay.style.display='none';
+    arena.beginPlayback(pos.mode);
+    idx=0;
+    btnNext.style.display = moveHistory.length ? '' : 'none';
+  };
+  btnNext.onclick=async ()=>{
+    if(idx>=moveHistory.length){ btnNext.style.display='none'; return; }
+    btnNext.disabled=true;
+    await arena.step(moveHistory[idx++]);
+    btnNext.disabled=false;
+    if(idx>=moveHistory.length) btnNext.style.display='none';
+  };
 }
 
 function showGameOverBanner(msg){
